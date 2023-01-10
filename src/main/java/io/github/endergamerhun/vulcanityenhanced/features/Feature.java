@@ -8,4 +8,5 @@ public abstract class Feature {
     public boolean enabled() {
         return ENABLED;
     }
+    public abstract void reload();
 }

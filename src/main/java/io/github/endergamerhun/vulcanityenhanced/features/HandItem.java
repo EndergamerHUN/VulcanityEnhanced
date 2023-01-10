@@ -49,7 +49,12 @@ public class HandItem extends Feature implements Listener {
         BaseComponent component = meta != null && meta.hasDisplayName() ?
                 new TextComponent(meta.getDisplayName()) :
                 new TranslatableComponent(String.format("%s.minecraft.%s", (material.isBlock() ? "block" : "item"), material.toString().toLowerCase()));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(material.getKey().toString(), 1, ItemTag.ofNbt(new NBTItem(item).toString()))));
+        if (!material.isAir()) component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(material.getKey().toString(), 1, ItemTag.ofNbt(new NBTItem(item).toString()))));
         return component;
+    }
+
+    @Override
+    public void reload() {
+
     }
 }

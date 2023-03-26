@@ -1,0 +1,34 @@
+name: VulcanityEnhanced
+author: EndergamerHUN
+version: '${project.version}'
+main: io.github.endergamerhun.vulcanityenhanced.VulcanityEnhanced
+api-version: 1.18
+
+softdepend: [NBTAPI, PlaceholderAPI, Kingdoms, Essentials, WorldGuard, ProtectionStones]
+
+commands:
+  vulcanityenhanced:
+    aliases: vce
+    description: VulcanityEnhanced admin commands.
+    permission: vulcanity.admin
+  togglemaxhealth:
+    description: Toggles weather or not to show the player's max health.
+    permission: vulcanity.togglemaxhealth
+  stream:
+    description: Displays a bossbar and a chat message with stream information.
+    permission: vulcanity.stream
+
+permissions:
+  vulcanity.ipwhitelist:
+    description: Forces the player to join on a specified IP.
+    default: false
+  vulcanity.admin:
+    description: Allows the player to receive admin messages.
+  vulcanity.hand:
+    description: Show the current held item in chat.
+  vulcanity.togglemaxhealth:
+    description: Access to toggle command.
+  vulcanity.bypasslogging:
+    description: Does not log commands from players with this permission.
+  vulcanity.stream:
+    description: Allows the player to use the stream command.

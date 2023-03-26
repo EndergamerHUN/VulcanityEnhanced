@@ -8,8 +8,10 @@ import java.io.IOException;
 
 public class FileUtil {
 
+    public static File root = Util.getInstance().getDataFolder().getAbsoluteFile();
+
     public static File getConfigFile(String name) {
-        return new File(Util.getInstance().getDataFolder().getAbsoluteFile(),name);
+        return new File(root, name);
     }
 
     public static void saveToFile(FileConfiguration config, String name) {
@@ -21,14 +23,8 @@ public class FileUtil {
     }
     public static void loadFromFile(FileConfiguration config, String name) {
         File file = getConfigFile(name);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         try {
+            if (file.createNewFile()) return;
             config.load(file);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();

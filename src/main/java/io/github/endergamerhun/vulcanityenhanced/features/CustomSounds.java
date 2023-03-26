@@ -1,6 +1,8 @@
 package io.github.endergamerhun.vulcanityenhanced.features;
 
 import de.codingair.tradesystem.spigot.events.TradeRequestEvent;
+import io.github.endergamerhun.vulcanityenhanced.interfaces.Feature;
+import io.github.endergamerhun.vulcanityenhanced.interfaces.RequirePlugins;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,8 +13,7 @@ import org.kingdoms.events.general.KingdomDisbandEvent;
 import org.kingdoms.events.invasion.KingdomInvadeEvent;
 import org.kingdoms.events.members.KingdomLeaveEvent;
 
-public class CustomSounds extends Feature implements Listener {
-
+public class CustomSounds implements Feature, RequirePlugins, Listener {
     @EventHandler
     public void onKingdomLeave(KingdomLeaveEvent e) {
         Player p = e.getKingdomPlayer().getPlayer();
@@ -47,5 +48,12 @@ public class CustomSounds extends Feature implements Listener {
     }
 
     @Override
-    public void reload() {}
+    public String[] requiredPlugins() {
+        return new String[]{"Kingdoms"};
+    }
+
+    @Override
+    public String getName() {
+        return "CustomSounds";
+    }
 }

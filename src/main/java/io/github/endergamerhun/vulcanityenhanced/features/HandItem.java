@@ -1,6 +1,8 @@
 package io.github.endergamerhun.vulcanityenhanced.features;
 
 import de.tr7zw.nbtapi.NBTItem;
+import io.github.endergamerhun.vulcanityenhanced.interfaces.Feature;
+import io.github.endergamerhun.vulcanityenhanced.interfaces.Toggleable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Item;
@@ -15,11 +17,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Set;
 
-public class HandItem extends Feature implements Listener {
+public class HandItem implements Feature, Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChat(AsyncPlayerChatEvent e) {
-        if (!enabled()) return;
         String message = e.getMessage();
         if (!message.matches(".*\\[item].*")) return;
         Player player = e.getPlayer();
@@ -54,7 +55,7 @@ public class HandItem extends Feature implements Listener {
     }
 
     @Override
-    public void reload() {
-
+    public String getName() {
+        return "HandItem";
     }
 }

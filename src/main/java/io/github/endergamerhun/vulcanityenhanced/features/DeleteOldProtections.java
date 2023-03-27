@@ -11,6 +11,7 @@ import io.github.endergamerhun.vulcanityenhanced.interfaces.Feature;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.Reloadable;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.RequirePlugins;
 import io.github.endergamerhun.vulcanityenhanced.utils.LogUtil;
+import io.github.endergamerhun.vulcanityenhanced.utils.PluginUtil;
 import io.github.endergamerhun.vulcanityenhanced.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -40,7 +41,7 @@ public class DeleteOldProtections implements Feature, RequirePlugins, Configurea
             ArrayList<UUID> owners = psRegion.getOwners();
             StringBuilder names = new StringBuilder();
             for (UUID uuid : owners) {
-                User user = Util.getEssentials().getUser(uuid);
+                User user = PluginUtil.getEssentials().getUser(uuid);
                 if (!user.getBase().isOnline()) {
                     long last = Math.max(user.getLastLogin(), user.getLastLogout());
                     long now = System.currentTimeMillis();
@@ -81,6 +82,6 @@ public class DeleteOldProtections implements Feature, RequirePlugins, Configurea
     }
 
     public String[] requiredPlugins() {
-        return new String[]{"WorldGuard","ProtectionStones"};
+        return new String[]{"WorldGuard","ProtectionStones","Essentials"};
     }
 }

@@ -16,7 +16,7 @@ public final class VulcanityEnhanced extends JavaPlugin {
         saveDefaultConfig();
         getCommand("vulcanityenhanced").setExecutor(new VulcanityEnhancedCommand());
         Util.reload();
-        LogUtil.log(false,"Loaded");
+        LogUtil.log(false,"Plugin loaded");
     }
 
     @Override

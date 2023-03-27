@@ -4,7 +4,7 @@ import io.github.endergamerhun.vulcanityenhanced.interfaces.Configureable;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.Feature;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.RequirePlugins;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.Unloadable;
-import io.github.endergamerhun.vulcanityenhanced.utils.Util;
+import io.github.endergamerhun.vulcanityenhanced.utils.PluginUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -29,8 +29,7 @@ public class AFKIcon extends PlaceholderExpansion implements Feature, RequirePlu
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String params) {
-        if (Util.getEssentials() == null) return null;
-        return Util.getEssentials().getUser(player).isAfk() ? icon : "";
+        return PluginUtil.getEssentials().getUser(player).isAfk() ? icon : "";
     }
 
     public void configure(ConfigurationSection config) {

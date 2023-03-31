@@ -20,6 +20,7 @@ public class Util {
         Reflections reflections = new Reflections("io.github.endergamerhun.vulcanityenhanced");
         List<Feature> featureList = new ArrayList<>();
         for (Class<? extends Feature> clazz : reflections.getSubTypesOf(Feature.class)) {
+            if (clazz.isInterface()) continue;
             try {
                 Feature feature = clazz.newInstance();
                 featureList.add(feature);

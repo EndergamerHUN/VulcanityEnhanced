@@ -2,15 +2,21 @@ package io.github.endergamerhun.vulcanityenhanced.command;
 
 import io.github.endergamerhun.vulcanityenhanced.interfaces.CommandFeature;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.Toggleable;
+import io.github.endergamerhun.vulcanityenhanced.utils.BlockUtil;
+import io.github.endergamerhun.vulcanityenhanced.utils.CmdUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FakeBlock extends Toggleable implements CommandFeature {
@@ -44,27 +50,55 @@ public class FakeBlock extends Toggleable implements CommandFeature {
                 return true;
             }
         }
-        Material block = Material.DIAMOND_ORE;
+        Material material = Material.DIAMOND_ORE;
         if (arg >= 3) {
-            block = Material.getMaterial(args[2]);
-            if (block == null) {
+            material = Material.getMaterial(args[2]);
+            if (material == null || material.isAir() || !material.isBlock()) {
                 sender.sendMessage("§cIllegal material");
                 return true;
             }
         }
+
         Location pos = p.getLocation();
-        //List<BlockState> list =
-        //player.sendBlockChanges();
+        World world = pos.getWorld();
+        BlockData data = material.createBlockData();
+        BlockUtil.sphere(pos.toVector().toBlockVector(), size).forEach(vector -> {
+            Location loc = vector.toLocation(world);
+            player.sendBlockChange(loc, data);
+        });
+
+        /*
+        Collection<Vector> sphere = BlockUtil.sphere(pos.toVector(), size);
+        List<BlockState> changes = sphere.stream().map((vector -> {
+            BlockState state = vector.toLocation(world).getBlock().getState();
+            state.setType(finalMaterial);
+            return state;
+        })).toList();
+        player.sendBlockChanges(changes, true);
+         */
+
+
         return true;
     }
 
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return null;
+        List<String> completions = new ArrayList<>();
+        int arg = args.length;
+        switch (arg) {
+            case 1 -> completions.addAll(CmdUtil.onlinePlayers());
+            case 2 -> completions.addAll(CmdUtil.stringify(CmdUtil.intRange(9)));
+            case 3 -> completions.addAll(CmdUtil.stringify(CmdUtil.blocks()));
+        }
+        return StringUtil.copyPartialMatches(args[arg-1], completions, new ArrayList<>());
     }
 
     public String getCommand() {
         return "fakeblock";
+    }
+
+    public String getName() {
+        return "FakeBlock";
     }
 }

@@ -17,6 +17,9 @@ commands:
   stream:
     description: Displays a bossbar and a chat message with stream information.
     permission: vulcanity.stream
+  fakeblock:
+    description: Shows blocks to the client that don't exist on the server.
+    permission: vulcanity.fakeblock
 
 permissions:
   vulcanity.ipwhitelist:
@@ -32,3 +35,5 @@ permissions:
     description: Does not log commands from players with this permission.
   vulcanity.stream:
     description: Allows the player to use the stream command.
+  vulcanity.fakeblock:
+    description: Allows use of /fakeblock

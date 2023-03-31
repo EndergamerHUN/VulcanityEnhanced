@@ -45,6 +45,7 @@ public class LogUtil {
         sendDiscordWebhook(String.format(format, objects), webhook, name, avatar);
     }
     public static void sendDiscordWebhook(String message, String webhook, String name, String avatar) {
+        if ("".equals(webhook)) return;
         DiscordWebhook hook = new DiscordWebhook(webhook);
         if (!"".equals(avatar)) hook.setAvatarUrl(avatar);
         if (!"".equals(name)) hook.setUsername(name);

@@ -12,7 +12,6 @@ import io.github.endergamerhun.vulcanityenhanced.interfaces.Reloadable;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.RequirePlugins;
 import io.github.endergamerhun.vulcanityenhanced.utils.LogUtil;
 import io.github.endergamerhun.vulcanityenhanced.utils.PluginUtil;
-import io.github.endergamerhun.vulcanityenhanced.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,17 +22,20 @@ import java.util.UUID;
 
 public class DeleteOldProtections implements Feature, RequirePlugins, Configureable, Reloadable {
 
-    private static final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
     private static World world;
     private static int deleteRequirement;
 
     public void reload() {
         if (deleteRequirement == -1) return;
+
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionManager rm = container.get(BukkitAdapter.adapt(world));
+
         if (rm == null) {
             LogUtil.warn("RegionManager in DeleteOldProtections is null!");
             return;
         }
+
         rm.getRegions().forEach((id, wgRegion) -> {
             PSRegion psRegion = PSRegion.fromWGRegion(world, wgRegion);
             if (psRegion == null) return;

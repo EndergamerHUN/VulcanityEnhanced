@@ -1,8 +1,7 @@
 package io.github.endergamerhun.vulcanityenhanced.command;
 
-import io.github.endergamerhun.bossbarmessage.bossbar.BossBarManager;
+import io.github.endergamerhun.vulcanityenhanced.interfaces.CommandFeature;
 import io.github.endergamerhun.vulcanityenhanced.interfaces.Savable;
-import io.github.endergamerhun.vulcanityenhanced.interfaces.Toggleable;
 import io.github.endergamerhun.vulcanityenhanced.utils.FileUtil;
 import io.github.endergamerhun.vulcanityenhanced.utils.LogUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -15,7 +14,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -27,20 +26,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class StreamCommand extends Toggleable implements TabExecutor, Listener, Savable {
+public class StreamCommand implements CommandFeature, Listener, Savable {
 
-    private final HashMap<UUID, HashMap<Platform, String>> linkStorage = new HashMap<>();
+    private final HashMap<UUID, HashMap<Platform, String>> userLinks = new HashMap<>();
 
     @Override
     public void save() {
         FileConfiguration config = new YamlConfiguration();
         FileUtil.loadFromFile(config, "links.yml");
-        linkStorage.forEach((uuid, platforms) -> {
-            String uuidString = uuid.toString();
-            platforms.forEach(((platform, link) -> {
-                config.set(uuidString+platform, link);
-            }));
-        });
+        FileUtil.loadFromMap(config, userLinks);
         FileUtil.saveToFile(config, "links.yml");
     }
 
@@ -50,22 +44,21 @@ public class StreamCommand extends Toggleable implements TabExecutor, Listener, 
         FileUtil.loadFromFile(config, "links.yml");
         UUID uuid = e.getPlayer().getUniqueId();
         HashMap<Platform, String> links = new HashMap<>();
-        config.getStringList(uuid.toString()).forEach(platform -> {
-            try {
-                links.put(Platform.valueOf(platform), config.getString(uuid+platform));
-            } catch (IllegalArgumentException ignore) {
-                LogUtil.broadcast("§cUnknown platform found: " + platform);
+        ConfigurationSection section = config.getConfigurationSection(uuid.toString());
+        if (section != null){
+            for (String platform : section.getKeys(false)) {
+                try {
+                    links.put(Platform.valueOf(platform), section.getString(platform));
+                } catch (IllegalArgumentException ignore) {
+                    LogUtil.warn("Unknown platform %s for user %s", platform, uuid.toString());
+                }
             }
-        });
-        linkStorage.put(uuid, links);
+        }
+        userLinks.put(uuid, links);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!enabled()) {
-            sender.sendMessage("§cFeature not enabled");
-            return true;
-        }
         if (args.length < 2) {
             sender.sendMessage("§cPlease provide more arguments!");
             return true;
@@ -96,13 +89,13 @@ public class StreamCommand extends Toggleable implements TabExecutor, Listener, 
                 return true;
             }
         }
-        if (sender instanceof Player p) linkStorage.get(p.getUniqueId()).put(platform, args[0]);
+        if (sender instanceof Player p) userLinks.get(p.getUniqueId()).put(platform, args[1]);
 
-        BossBarManager.message(message, 600, color, style);
+        //BossBarManager.message(message, 600, color, style);
 
         ComponentBuilder builder = new ComponentBuilder(message);
         TextComponent clickable = new TextComponent(" [LINK]");
-        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, platform.link(args[0])));
+        clickable.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, platform.link(args[1])));
         builder.append(clickable).color(ChatColor.YELLOW).bold(true);
         BaseComponent[] send = builder.create();
 
@@ -120,7 +113,7 @@ public class StreamCommand extends Toggleable implements TabExecutor, Listener, 
             case 2 -> {
                 Platform platform;
                 try {
-                    platform = Platform.valueOf(args[0]);
+                    platform = Platform.valueOf(args[0].toUpperCase());
                     completions.add(getPreviousLink(p.getUniqueId(), platform));
                 } catch (IllegalArgumentException ignore) {}
             }
@@ -129,18 +122,24 @@ public class StreamCommand extends Toggleable implements TabExecutor, Listener, 
     }
 
     private String getPreviousLink(UUID uuid, Platform platform) {
-        String link = linkStorage.get(uuid).get(platform);
+        String link = userLinks.get(uuid).get(platform);
         if (link == null) return getDefaultLink(platform);
         return link;
     }
 
     private String getDefaultLink(Platform platform) {
-        String value = "";
-        switch (platform) {
-            case TWITCH -> value = "@endergamer_hun";
-            case YOUTUBE -> value = "endergamer_hun";
-        }
-        return value;
+        return switch (platform) {
+            case TWITCH -> "endergamer_hun";
+            case YOUTUBE -> "@endergamer_hun";
+            default -> "";
+        };
+    }
+
+    public String getName() {
+        return "StreamCommand";
+    }
+    public String getCommand() {
+        return "stream";
     }
 
     public enum Platform {

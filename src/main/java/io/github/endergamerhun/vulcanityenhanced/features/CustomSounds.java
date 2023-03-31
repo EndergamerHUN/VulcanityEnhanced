@@ -27,12 +27,8 @@ public class CustomSounds implements Feature, RequirePlugins, Listener {
     @EventHandler
     public void onKingdomInvade(KingdomInvadeEvent e) {
         Invasion invasion = e.getInvasion();
-        invasion.getAttacker().getOnlineMembers().forEach(player -> {
-            player.playSound(player.getLocation(), "vulcanity:kingdoms.invade", 1f, 1f);
-        });
-        invasion.getDefender().getOnlineMembers().forEach(player -> {
-            player.playSound(player.getLocation(), "vulcanity:kingdoms.invaded", 1f, 1f);
-        });
+        invasion.getAttacker().getOnlineMembers().forEach(player -> player.playSound(player.getLocation(), "vulcanity:kingdoms.invade", 1f, 1f));
+        invasion.getDefender().getOnlineMembers().forEach(player -> player.playSound(player.getLocation(), "vulcanity:kingdoms.invaded", 1f, 1f));
     }
     @EventHandler
     public void onTrade(TradeRequestEvent e) {
@@ -42,9 +38,7 @@ public class CustomSounds implements Feature, RequirePlugins, Listener {
     @EventHandler
     public void onOwnerJoin(PlayerJoinEvent e) {
         if (!e.getPlayer().hasPermission("group.owner")) return;
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.playSound(player.getLocation(), "vulcanity:bolond", 1f, 1f);
-        });
+        Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), "vulcanity:bolond", 1f, 1f));
     }
 
     @Override

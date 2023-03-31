@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import java.util.List;
+
 public class PlayerCommandLogger implements Feature, Listener, Configureable {
 
     private String serverName = "Unnamed Server";
@@ -30,15 +32,21 @@ public class PlayerCommandLogger implements Feature, Listener, Configureable {
     }
 
     public void configure(ConfigurationSection config) {
-        serverName = config.getString("server-name", "Unnamed Server");
-        webhook = config.getString("webhook", "");
-        avatar = config.getString("avatar","");
+        serverName = config.getString("server-name");
+        webhook = config.getString("webhook");
+        avatar = config.getString("avatar");
+        format = config.getString("format");
     }
     public void generateSection(ConfigurationSection config) {
-
+        config.set("webhook", "");
+        config.set("avatar", "");
+        config.set("server-name", "Unnamed Server");
+        config.set("format", "[%server%] %player% > %command%");
+        config.setComments("avatar", List.of("Leave as empty string to use default"));
+        config.setComments("format", List.of("Usable placeholders are:", "%server% - server name specified", "%player% - the player executing the command", "%command the executed command%"));
     }
     public String[] requiredValues() {
-        return new String[]{"server-name","format"};
+        return new String[]{"server-name","webhook","format"};
     }
 
     @Override
